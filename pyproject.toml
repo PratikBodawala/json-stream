@@ -39,7 +39,7 @@ requests = ["requests"]
 httpx = ["httpx"]
 
 [tool.setuptools.packages.find]
-where = ["src"]
+where = ["."]
 
 [tool.setuptools.dynamic]
 readme = {file = ["README.md"], content-type = "text/markdown"}
