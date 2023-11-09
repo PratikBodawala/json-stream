@@ -15,7 +15,11 @@ class Streamable:
     def __next__(self):
         if self._cache:
             return self._cache.popleft()
-        return next(self._it)
+        if self.use_lock:
+            with self.use_lock:
+                return next(self._it)
+        else:
+            return next(self._it)
 
     def _peek(self):
         try:
