@@ -3,10 +3,11 @@ from functools import wraps
 
 
 class Streamable:
-    def __init__(self, iterable):
+    def __init__(self, iterable, use_lock=None):
         super().__init__()
         self._it = iter(iterable)
         self._cache = deque()
+        self.use_lock = use_lock
 
     def __iter__(self):
         return self
@@ -18,7 +19,11 @@ class Streamable:
 
     def _peek(self):
         try:
-            peek = next(self._it)
+            if self.use_lock:
+                with self.use_lock:
+                    peek = next(self._it)
+            else:
+                peek = next(self._it)
         except StopIteration:
             pass
         else:
