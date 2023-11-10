@@ -1,5 +1,6 @@
 from collections import deque
 from functools import wraps
+from time import sleep
 
 
 class Streamable:
@@ -14,15 +15,23 @@ class Streamable:
     def __next__(self):
         if self._cache:
             return self._cache.popleft()
-        return next(self._it)
+        while True:
+            try:
+                return next(self._it)
+            except ValueError:
+                sleep(0.1)
 
     def _peek(self):
-        try:
-            peek = next(self._it)
-        except StopIteration:
-            pass
-        else:
-            self._cache.append(peek)
+        while True:
+            try:
+                peek = next(self._it)
+            except ValueError:
+                sleep(0.1)
+            except StopIteration:
+                break
+            else:
+                self._cache.append(peek)
+                break
 
     def __bool__(self):
         self._peek()
